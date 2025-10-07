@@ -10,6 +10,11 @@
 #include "ui/text-render-helper.h"
 #include <obs-frontend-api.h>
 
+struct CallbackData {
+            obs_source_t *target;
+            bool *found;
+        };
+		
 void acquire_output_source_ref_by_name(const char *output_source_name, obs_source_t **output_source)
 {
 	if (!is_valid_output_source_name(output_source_name)) {
@@ -66,15 +71,32 @@ void setTextCallback(const std::string &str, const output_mapping &mapping)
 				if (scene == nullptr) {
 					return true;
 				}
-				obs_sceneitem_t *scene_item = obs_scene_sceneitem_from_source(
-					scene, (obs_source_t *)target_ptr);
-				if (scene_item == nullptr) {
-					return true;
-				}
-				obs_sceneitem_set_visible(scene_item, true);
-				return false; // stop enumerating
+				obs_source_t *target = (obs_source_t *)target_ptr;
+				bool found = false;
+
+				// Enumerate all items in the scene
+				CallbackData data;
+				data.target = target;
+				data.found = &found;
+
+				// Enumerate all items in the scene
+				obs_scene_enum_items(scene,
+					[](obs_scene_t *scene, obs_sceneitem_t *item, void *param) -> bool {
+						CallbackData *data = (CallbackData *)param;
+
+						if (obs_sceneitem_get_source(item) == data->target) {
+							obs_sceneitem_set_visible(item, true);
+							*(data->found) = true;
+							return false;
+						}
+						return true;
+					},
+					&data
+				);
+				return !found; // continue enumerating scenes if not found
 			},
-			target);
+			target
+		);
 	}
 	obs_data_release(target_settings);
 	obs_source_release(target);
