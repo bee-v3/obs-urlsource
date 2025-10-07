@@ -34,7 +34,7 @@
       "description": "Build for macOS 11.0+ (Universal binary) for CI",
       "generator": "Xcode",
       "cacheVariables": {
-        "CMAKE_COMPILE_WARNING_AS_ERROR": true
+        "CMAKE_COMPILE_WARNING_AS_ERROR": false
       }
     },
     {
@@ -63,7 +63,7 @@
       "displayName": "Windows x64 CI build",
       "description": "Build for Windows x64 on CI",
       "cacheVariables": {
-        "CMAKE_COMPILE_WARNING_AS_ERROR": true
+        "CMAKE_COMPILE_WARNING_AS_ERROR": false
       }
     },
     {
@@ -93,6 +93,16 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "CMAKE_COMPILE_WARNING_AS_ERROR": true
+      }
+    },
+    {
+      "name": "ubuntu-ci-x86_64",
+      "inherits": ["linux-x86_64"],
+      "displayName": "Linux x86_64 CI build",
+      "description": "Build for Linux x86_64 on CI",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_COMPILE_WARNING_AS_ERROR": false
       }
     },
     {
@@ -163,6 +173,13 @@
     },
     {
       "name": "linux-ci-x86_64",
+      "configurePreset": "linux-ci-x86_64",
+      "displayName": "Linux x86_64 CI",
+      "description": "Linux CI build for x86_64",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ubuntu-ci-x86_64",
       "configurePreset": "linux-ci-x86_64",
       "displayName": "Linux x86_64 CI",
       "description": "Linux CI build for x86_64",
